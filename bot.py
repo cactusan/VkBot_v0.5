@@ -1,4 +1,5 @@
-import datetime
+import random
+
 import bs4 as bs4
 import requests
 
@@ -8,22 +9,20 @@ class Bot:
 	"""
 	def __init__(self, user_id):
 		self.USER_ID = user_id
-		self.COMMANDS = ["ПРИВЕТ", "СОЗДАТЕЛЬ", "ВРЕМЯ"]
-
-	def get_time(self):
-		time = datetime.datetime.now().strftime("%H:%M")
-		return str(time)
+		self.HELLO = ["ПРИВЕТ", "ХАЙ", "ЗДРАВСТВУЙ"]
+		self.HELLO_ANSWER = ["Привет!)", "Хай)", "Здравствуй))", "Hello my friend!"]
+		self.BYE = ["Пока-пока!))", "До встречи!", "Увидимся)", "Славься хлеб!"]
+		self.CREATOR = ["СОЗДАТЕЛЬ", "АВТОР", "РАЗРАБОТЧИК", "КТО ТВОЙ СОЗДАТЕЛЬ"]
 
 	def new_message(self, message):
 		# Привет
-		if message.upper() == self.COMMANDS[0]:
-			return "Привет!"
+		if message.upper() in self.HELLO:
+			return random.choice(self.HELLO_ANSWER)
 		# Создатель
-		elif message.upper() == self.COMMANDS[1]:
+		elif message.upper() in self.CREATOR:
 			return "https://vk.com/cact_us"
-		# Время
-		elif message.upper() == self.COMMANDS[2]:
-			return self.get_time()
+		elif message.upper() == "ПОКА":
+			return random.choice(self.BYE)
 		# Неизвестное сообщение
 		else:
-			return "Я вас не понимаю."
+			return "Я вас не понимаю.("
