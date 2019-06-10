@@ -38,10 +38,15 @@ class Weather:
 			res = requests.get("http://api.openweathermap.org/data/2.5/weather",
 							params = {"id": city_id, "units": "metric", "lang": "ru", "APPID": self.APPID})
 			data = res.json()
-			message = "Погода в {}:\nСостояние:		{}\nТемпература:		{}\nМинимальная температура:		{}\nМаксимальная температура:	{}\n".format(city, data["weather"][0]["description"], 
-																																									data['main']['temp'], 
-																																									data['main']['temp_min'], 
-																																									data['main']['temp_max'])
+			message = "Погода в {}: {}\nСостояние: {}\nТемпература: {} °С\nМинимальная температура:	{} °С\nМаксимальная температура: {} °С\nВлажность: {} %\nДавление: {} мм рт.ст\nСкорость ветра: {} м/с\n".format(city, 
+																																																			data['weather'][0]['main'],																																									
+																																																			data["weather"][0]["description"], 
+																																																			data['main']['temp'], 
+																																																			data['main']['temp_min'], 
+																																																			data['main']['temp_max'],
+																																																			data['main']['humidity'],
+																																																			data['main']['pressure'],
+																																																			data['wind']['speed'])
 			return message
 
 		except Exception as e:
