@@ -41,12 +41,12 @@ class Weather:
 			message = "Погода в {}: {}\nСостояние: {}\nТемпература: {} °С\nМинимальная температура:	{} °С\nМаксимальная температура: {} °С\nВлажность: {} %\nДавление: {} мм рт.ст\nСкорость ветра: {} м/с\n".format(city, 
 																																																			data['weather'][0]['main'],																																									
 																																																			data["weather"][0]["description"], 
-																																																			data['main']['temp'], 
-																																																			data['main']['temp_min'], 
-																																																			data['main']['temp_max'],
-																																																			data['main']['humidity'],
-																																																			data['main']['pressure'],
-																																																			data['wind']['speed'])
+																																																			round(int(data['main']['temp']), 1), 
+																																																			round(int(data['main']['temp_min']), 1), 
+																																																			round(int(data['main']['temp_max']), 1),
+																																																			round(int(data['main']['humidity'])),
+																																																			round(int(data['main']['pressure'])),
+																																																			round(int(data['wind']['speed']), 1))
 			return message
 
 		except Exception as e:
