@@ -8,7 +8,7 @@ from bot import Bot
 from weather import Weather
 
 # Авторизация для сообщества
-vk = vk_api.VkApi(token="00b73157edcc1908a48d21a259762638b7cec649e01375e2dc70f5dc5a44f2ec88c6b80d66c85df03343f")
+vk = vk_api.VkApi(token="TOKEN HERE")
 longpoll = VkLongPoll(vk)
 
 # Функция отправки сообшений
