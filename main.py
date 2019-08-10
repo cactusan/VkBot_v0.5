@@ -11,7 +11,7 @@ class BotMainLoop(object):
 	""" Bot main class """
 
 	def __init__(self):
-		self.app_token = ""
+		self.app_token = "00b73157edcc1908a48d21a259762638b7cec649e01375e2dc70f5dc5a44f2ec88c6b80d66c85df03343f"
 		self.vk = vk_api.VkApi(token=self.app_token)
 		self.longpoll = VkLongPoll(self.vk)
 		self.loop()
@@ -37,14 +37,14 @@ class BotMainLoop(object):
 							text = event.text.split(" ")
 							# Если пользователь хочет узнать погоду.
 							if text[0].upper() == "ПОГОДА":
-								bot = Weather(event.user_id)
+								weather_mod = Weather(event.user_id)
 								try:
-									city_id = bot.find_city(text[1])
-									city = bot.upper_name(text[1])
-									message = bot.find_out_the_weather(city_id, city)
+									city_id = weather_mod.searchCity(text[1])
+									city = text[1].capitalize()
+									message = weather_mod.find_out_the_weather(city_id, city)
 									self.write_msg(event.user_id, random_id, message)
 								except Exception as e:
-									print("[Incorrect input] :: ", e)
+									print("[Incorrect city input] :: ", e)
 									self.write_msg(event.user_id, random_id, "Не могу найти информацию по Вашему запросу.")
 							# Общение с ботом
 							else:
