@@ -11,7 +11,7 @@ class BotMainLoop(object):
 	""" Bot main class """
 
 	def __init__(self):
-		self.app_token = "00b73157edcc1908a48d21a259762638b7cec649e01375e2dc70f5dc5a44f2ec88c6b80d66c85df03343f"
+		self.app_token = ""
 		self.vk = vk_api.VkApi(token=self.app_token)
 		self.longpoll = VkLongPoll(self.vk)
 		self.loop()
