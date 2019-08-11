@@ -1,11 +1,14 @@
 import random as rnd
 import requests
+import sys
 
 from vk_api.longpoll import VkLongPoll, VkEventType
 import vk_api
 
+sys.path.insert(1, r'modules')
 from bot import Bot
 from weather import Weather
+import cities
 
 class BotMainLoop(object):
 	""" Bot main class """
@@ -35,16 +38,29 @@ class BotMainLoop(object):
 							bot = Bot(event.user_id, self.app_token)
 							random_id = rnd.randrange(1, 500, 1)
 							text = event.text.split(" ")
-							# Если пользователь хочет узнать погоду.
+							# Если пользователь хочет узнать текущую погоду.
 							if text[0].upper() == "ПОГОДА":
-								weather_mod = Weather(event.user_id)
+								weather_mod = Weather()
 								try:
 									city_id = weather_mod.searchCity(text[1])
 									city = text[1].capitalize()
-									message = weather_mod.find_out_the_weather(city_id, city)
+									message = weather_mod.current_weather(city_id, city)
 									self.write_msg(event.user_id, random_id, message)
 								except Exception as e:
-									print("[Incorrect city input] :: ", e)
+									print("[Incorrect city input (current weather)] :: ", e)
+									self.write_msg(event.user_id, random_id, "Не могу найти информацию по Вашему запросу.")
+							# Если пользователь хочет узнать прогноз погоды.
+							elif text[0].upper() == "ПРОГНОЗ":
+								weather_mod = Weather()
+								try:
+									city_id = weather_mod.searchCity(text[1])
+									city = text[1].capitalize()
+									days = int(text[2])
+									message = weather_mod.weather_forecast(city_id, city, days)
+									# self.write_msg(event.user_id, random_id, message)
+									self.write_msg(event.user_id, random_id, "Данная функция находится в разработке.")
+								except Exception as e:
+									print("[Incorrect city input (weather forecast)] :: ", e)
 									self.write_msg(event.user_id, random_id, "Не могу найти информацию по Вашему запросу.")
 							# Общение с ботом
 							else:
