@@ -17,6 +17,7 @@ class BotMainLoop(object):
 		self.app_token = "00b73157edcc1908a48d21a259762638b7cec649e01375e2dc70f5dc5a44f2ec88c6b80d66c85df03343f"
 		self.vk = vk_api.VkApi(token=self.app_token)
 		self.longpoll = VkLongPoll(self.vk)
+		self.CitiesGame = cities.Game()
 		self.loop()
 
 	def write_msg(self, user_id, random_id, message):
@@ -43,16 +44,19 @@ class BotMainLoop(object):
 					if event.type == VkEventType.MESSAGE_NEW:
 						if event.to_me:
 							random_id = random.randrange(1, 500, 1)
-							text = event.text
+							normal_text = event.text
 							command = event.text.split(" ")
-							if text.upper() in lists.HELLO_Q:
+							# Приветствие
+							if normal_text.upper() in lists.HELLO_Q:
 								user_name = self.get_user_info(event.user_id)
 								message = random.choice(lists.HELLO_A) + user_name + random.choice(lists.SYMBOLS)
 								self.write_msg(event.user_id, random_id, message)
-							elif text.upper() in lists.CREATOR_Q:
+							# Создатель
+							elif normal_text.upper() in lists.CREATOR_Q:
 								message = "https://vk.com/cact_us"
 								self.write_msg(event.user_id, random_id, message)
-							elif text.upper() in lists.BYE_Q:
+							# Прощание
+							elif normal_text.upper() in lists.BYE_Q:
 								message = random.choice(lists.BYE_A)
 								self.write_msg(event.user_id, random_id, message)
 							# Если пользователь хочет узнать текущую погоду.
@@ -79,6 +83,20 @@ class BotMainLoop(object):
 								except Exception as e:
 									print("[Incorrect city input (weather forecast)] :: ", e)
 									self.write_msg(event.user_id, random_id, "Не могу найти информацию по Вашему запросу.")
+							# Игра в города
+							elif command[0].upper() == "ГОРОДА":
+								try:
+									if command[0].upper() == "ГОРОДА" and command[1].upper() == "РЕСТАРТ":
+										self.CitiesGame.resetGame()
+										self.write_msg(event.user_id, random_id, "Игра города перезапущена!")
+									elif command[0].upper() == "ГОРОДА" and command[1].upper() == "НАЗВАННЫЕ":
+										message = self.CitiesGame.sendUsedCitues()
+										self.write_msg(event.user_id, random_id, message)
+									else:
+										message = self.CitiesGame.gameMainLoop(command[1])
+										self.write_msg(event.user_id, random_id, message)
+								except Exception as e:
+									print("[Game cities] :: ", e)
 							# Общение с ботом
 							else:
 								message = "Я вас не понимаю.("

@@ -26,15 +26,27 @@ class Game(object):
     def __init__(self):
         self.inaccessible_pool = []
         self.available_pool = []
+        self.__readCityNames()
 
-    def readCityNames(self):
+    def __readCityNames(self):
         """ Reading city names from file """
         with open(r"modules\RussiaCities.txt", "r") as file:
             for city in file:
                 city = city[:-1]
-                self.available_pool.append(city)
+                self.available_pool.append(city.upper())
 
-    def checkCityName(self, city):
+    def gameMainLoop(self, text):
+        text = text.upper()
+        check = self.__checkCityName(text)
+        if check == 100:
+            return "Этот город уже назывался"
+        elif check == 102:
+            return "Такого города в России нет"
+        else:
+            self.__addCityToUsedPool(text)
+            return "OK"
+
+    def __checkCityName(self, city):
         if city in self.inaccessible_pool:
             return 100                      # Название находиться в недоступном пуле
         else:
@@ -43,8 +55,17 @@ class Game(object):
             else:
                 return 102                  # Такого города в России не существует
 
-    def giveAnAnswer(self):
-        pass
-
-    def addCityToUsedPool(self, city):
+    def __addCityToUsedPool(self, city):
         self.inaccessible_pool.append(city)
+
+    def resetGame(self):
+        self.available_pool += self.inaccessible_pool
+        self.inaccessible_pool.clear()
+
+    def sendUsedCitues(self):
+        names = ""
+        for name in self.inaccessible_pool:
+            names += name.capitalize() + ", "
+        names = names[:-2]
+        names += "."
+        return names
