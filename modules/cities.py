@@ -1,8 +1,3 @@
-"""
-----------------------------------------ТЗ----------------------------------------
-
--Проблемные буквы
-"""
 import random
 import xml.etree.cElementTree as et
 import sys
@@ -10,7 +5,7 @@ import sys
 
 
 class Game(object):
-    """ City's main game class """
+    """ Игра "Города" """
     def __init__(self):
         self.inaccessible_pool = []
         self.available_pool = []
@@ -18,6 +13,7 @@ class Game(object):
         self.previous_city = ""
 
     def gameMainLoop(self, text):
+        """ Главная функция игры """
         try:
             text = text.upper()
             digit = self.__checkTrueDigit(text, self.previous_city)
@@ -36,10 +32,12 @@ class Game(object):
             print("[MainLoop] :: ", e)
 
     def resetGame(self):
+        """ Функция перезапускающая игру """
         self.available_pool += self.inaccessible_pool
         self.inaccessible_pool.clear()
 
     def sendUsedCitues(self):
+        """ Отправка пользователю названные города """
         if not self.inaccessible_pool:
             return "Названных городов нет"
         else:
@@ -51,6 +49,7 @@ class Game(object):
             return names
 
     def __checkTrueDigit(self, user, bot):
+        """ Проверка совпадения последнего символа одного города с первым символом второго """
         try:
             if bot != "":
                 now_digit = user[0]
@@ -63,21 +62,31 @@ class Game(object):
             print("[Check digit] :: ", e)
 
     def __getAnswer(self, text):
-        text = text[-1]
+        """ Возвращает город в ответ пользователю """
+        flag = 0
+        if (text[-1] == "Ь") or (text[-1] == "Ъ") or (text[-1] == "Ы"): # Проверка на сложные буквы
+            last_digit = text[-2]
+        else:
+            last_digit = text[-1]
         random.shuffle(self.available_pool)
         for city in self.available_pool:
-            if city[0] == text:
+            if city[0] == last_digit:
+                flag = 1
                 self.previous_city = city
+                self.__addCityToUsedPool(city)
                 return city.capitalize()
+        if flag == 0:
+            message = f"Я не больше знаю городов на '{last_digit}'.\nПоздравляю! Вы победили!"
+            return message
 
     def __readCityNames(self, file_name):
-        """ Reading city names from file """
+        """ Чтение названий городов России из файла """
         try:
             tree = et.ElementTree(file=file_name)
             root = tree.getroot()
             for country in root.findall("city"):
                 id = country.find("country_id").text
-                if id == "3159":
+                if id == "3159": # id России
                     name = country.find("name").text
                     self.available_pool.append(name.upper())
         except Exception as e:
@@ -85,6 +94,7 @@ class Game(object):
             sys.exit()
 
     def __checkCityName(self, city):
+        """ Проверка доступности и правильности названия города """
         if city in self.inaccessible_pool:
             return 100                      # Название находиться в недоступном пуле
         else:
@@ -94,5 +104,6 @@ class Game(object):
                 return 102                  # Такого города в России не существует
     
     def __addCityToUsedPool(self, city):
+        """ Добавляет названный город в пул использованных """
         self.inaccessible_pool.append(city)
         self.available_pool.remove(city)

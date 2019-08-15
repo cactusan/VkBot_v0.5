@@ -1,3 +1,9 @@
+"""
+TЗ
+
+-Для прогноза погоды пользователь вводит дату
+"""
+
 import requests
 from datetime import datetime
 import json
@@ -19,7 +25,7 @@ class Weather:
 			print("[Search city] :: ", e)
 			pass
 
-	def parseUTC_Time(self, time):
+	def __parseUTC_Time(self, time):
 		""" Time conversion from UTC to human-readable form """
 		time = int(time)
 		return datetime.utcfromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")
@@ -29,7 +35,7 @@ class Weather:
 		try:
 			res = requests.get("http://api.openweathermap.org/data/2.5/weather", params = {"id": city_id, "units": "metric", "lang": "ru", "APPID": self.APPID})
 			data = res.json()
-			time = self.parseUTC_Time(data['dt'])
+			time = self.__parseUTC_Time(data['dt'])
 			weather_description = data["weather"][0]["description"]
 			main_temp = data['main']['temp']
 			humidity = data['main']['humidity']
